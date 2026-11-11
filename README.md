@@ -8,57 +8,44 @@ E-commerce platform rebuilt with **Django + DRF + React**.
 pip install -r requirements.txt
 cp .env.example .env
 python manage.py migrate
-python manage.py createsuperuser   # optional
+python manage.py createsuperuser
 python manage.py runserver
 ```
 
 - Admin: http://localhost:8000/admin/
 - Swagger: http://localhost:8000/api/docs/
 
-## Auth Endpoints (Phase 2)
+## Auth Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/auth/register/` | Register (CUSTOMER or MERCHANT) |
 | POST | `/api/auth/login/` | Login → access + refresh + user |
-| POST | `/api/auth/refresh/` | Refresh access token |
+| POST | `/api/auth/refresh/` | Refresh token |
 | GET | `/api/auth/me/` | Current user |
-| GET/PATCH | `/api/auth/profile/` | View / update profile |
+| GET/PATCH | `/api/auth/profile/` | Profile |
 
-### Register example
-```json
-{
-  "username": "merchant1",
-  "email": "m@test.com",
-  "password": "TestPass123!",
-  "password_confirm": "TestPass123!",
-  "role": "MERCHANT"
-}
-```
+## Products & Categories
 
-### Login example
-```json
-{
-  "username": "merchant1",
-  "password": "TestPass123!"
-}
-```
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/products/` | List (public, filter/search/paginate) |
+| GET | `/api/products/{id}/` | Detail |
+| POST | `/api/products/` | Create (Merchant) |
+| PUT/PATCH | `/api/products/{id}/` | Update own product |
+| DELETE | `/api/products/{id}/` | Delete own product |
+| GET | `/api/categories/` | List categories |
+| POST | `/api/categories/` | Create category (Merchant/Admin) |
+
+Query params: `?search=phone&category=1&ordering=-price&mine=1&page=1`
 
 ## Roles
 - `CUSTOMER` — browse, cart, orders
 - `MERCHANT` — manage own products
 - `ADMIN` — full access
 
-## Project Structure
-```
-config/          settings, urls
-accounts/        User, Auth, Permissions
-products/        (Phase 3)
-cart/            (Phase 4)
-orders/          (Phase 4)
-```
-
 ## Status
 - ✅ Phase 1: Foundation
 - ✅ Phase 2: Authentication
-- ⏳ Phase 3: Products & Categories
+- ✅ Phase 3: Products & Categories
+- ⏳ Phase 4: Cart & Orders

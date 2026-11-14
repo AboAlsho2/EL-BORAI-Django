@@ -1,0 +1,27 @@
+databases:
+  - name: elborai-db
+    plan: free
+    databaseName: elborai
+    user: elborai
+
+services:
+  - type: web
+    name: elborai-api
+    runtime: python
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: gunicorn config.wsgi:application
+    healthCheckPath: /api/schema/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: elborai-db
+          property: connectionString
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false

@@ -1,6 +1,7 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
+from .frontend_views import frontend_app
 from django.conf.urls.static import static
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -27,6 +28,9 @@ urlpatterns = [
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+
+    # React frontend fallback
+    re_path(r"^(?!api/|admin/|static/|media/).*", frontend_app),
 ]
 
 if settings.DEBUG:

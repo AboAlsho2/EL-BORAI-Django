@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from django.db import transaction
 from rest_framework import status, permissions, generics
 from rest_framework.response import Response
@@ -13,7 +14,10 @@ from .serializers import (
 )
 from accounts.permissions import IsAdmin, IsMerchantOrAdmin
 
-
+@extend_schema(
+    request=CreateOrderSerializer,
+    responses={201: OrderSerializer},
+)
 class CreateOrderView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -79,6 +83,9 @@ class OrderListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Order.objects.none()
+
         user = self.request.user
         if user.role == "ADMIN" or user.is_superuser:
             return Order.objects.prefetch_related("items").all()
@@ -90,12 +97,18 @@ class OrderDetailView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Order.objects.none()
+
         user = self.request.user
         if user.role == "ADMIN" or user.is_superuser:
             return Order.objects.prefetch_related("items").all()
         return Order.objects.prefetch_related("items").filter(user=user)
 
-
+@extend_schema(
+    request=UpdateOrderStatusSerializer,
+    responses={200: OrderSerializer},
+)
 class UpdateOrderStatusView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsMerchantOrAdmin]
 

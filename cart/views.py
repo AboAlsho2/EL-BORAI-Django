@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,7 +16,9 @@ def get_or_create_cart(user):
     cart, _ = Cart.objects.get_or_create(user=user)
     return cart
 
-
+@extend_schema(
+    responses={200: CartSerializer, 204: None},
+)
 class CartView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -29,7 +32,10 @@ class CartView(APIView):
         cart.items.all().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
+@extend_schema(
+    request=AddToCartSerializer,
+    responses={200: CartSerializer},
+)
 class AddToCartView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -57,7 +63,10 @@ class AddToCartView(APIView):
 
         return Response(CartSerializer(cart).data, status=status.HTTP_200_OK)
 
-
+@extend_schema(
+    request=UpdateCartItemSerializer,
+    responses={200: CartSerializer, 204: None},
+)
 class CartItemDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

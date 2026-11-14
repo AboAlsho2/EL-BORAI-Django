@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
@@ -36,7 +37,7 @@ class ProfileView(generics.RetrieveUpdateAPIView):
             return ProfileUpdateSerializer
         return UserSerializer
 
-
+@extend_schema(responses=UserSerializer)
 class MeView(APIView):
     """Simple /me endpoint."""
     permission_classes = [permissions.IsAuthenticated]
